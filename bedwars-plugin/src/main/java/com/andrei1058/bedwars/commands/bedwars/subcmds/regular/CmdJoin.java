@@ -29,6 +29,7 @@ import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.SetupSession;
 import com.andrei1058.bedwars.configuration.Sounds;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -54,6 +55,11 @@ public class CmdJoin extends SubCommand {
         Player p = (Player) s;
         if (args.length < 1) {
             s.sendMessage(getMsg(p, Messages.COMMAND_JOIN_USAGE));
+            return true;
+        }
+        if (args[0].startsWith("rbw") || (Arena.getArenaByName(args[0]) != null && Arena.getArenaByName(args[0]).getGroup().startsWith("rbw"))) {
+            p.sendMessage(ChatColor.RED + "You cannot /bw join RBW arenas");
+            Sounds.playSound("join-denied", p);
             return true;
         }
         if (args[0].equalsIgnoreCase("random")){

@@ -26,10 +26,14 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class LeaveCommand extends BukkitCommand {
 
     public LeaveCommand(String name) {
         super(name);
+        setAliases(List.of("l"));
     }
 
     @Override

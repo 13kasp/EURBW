@@ -66,7 +66,7 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
         instance = this;
         new CmdJoin(this, "join");
         new CmdLeave(this, "leave");
-        new CmdLang(this, "lang");
+        //new CmdLang(this, "lang");
         new CmdTeleporter(this, "teleporter");
         if (getServerType() != ServerType.BUNGEE) {
             new CmdGUI(this, "gui");
@@ -112,6 +112,9 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
         new CmdTpStaff(this, "tp");
         new CmdUpgrades(this, "upgradesmenu");
         new SetKillDropsLoc(this, "setKillDrops");
+        new CmdHotbar(this, "hotbar");
+        new CmdHotbarSave(this, "hotbarsave");
+        new CmdSpectate(this, "spectate");
     }
 
     @Override

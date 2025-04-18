@@ -26,6 +26,8 @@ import com.andrei1058.bedwars.api.arena.shop.IBuyItem;
 import com.andrei1058.bedwars.api.arena.team.TeamEnchant;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
 import com.andrei1058.bedwars.configuration.Sounds;
+import com.andrei1058.bedwars.hotbarmanager.HotbarItems;
+import com.andrei1058.bedwars.hotbarmanager.PlayerDataManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -261,8 +263,30 @@ public class BuyItem implements IBuyItem {
                 }
             }
         }
-        //
-        player.getInventory().addItem(i);
+
+        // HOTBAR MANAGER
+
+        String itemCategory = HotbarItems.getStringFromItemMaterial(i.getType());
+
+        if (!itemCategory.equals("invalid")) {
+            if (PlayerDataManager.hotbarLayout.get(player.getUniqueId()) != null && PlayerDataManager.hotbarLayout.get(player.getUniqueId()).get(itemCategory) != null) {
+                ItemStack itemInThatSlot = player.getInventory().getItem(PlayerDataManager.hotbarLayout.get(player.getUniqueId()).get(itemCategory));
+                player.getInventory().setItem(PlayerDataManager.hotbarLayout.get(player.getUniqueId()).get(itemCategory), i);
+
+                if (itemInThatSlot != null) {
+                    player.getInventory().addItem(itemInThatSlot);
+                }
+            }
+            else {
+                player.sendMessage(ChatColor.RED + "Something went wrong with your hotbar manager, the items won't go where you set them up to go mostly");
+                player.sendMessage(ChatColor.RED + "If this keeps happening even after a few games please open a ticket");
+                player.getInventory().addItem(i);
+            }
+        }
+        else {
+            player.getInventory().addItem(i);
+        }
+
         player.updateInventory();
     }
 

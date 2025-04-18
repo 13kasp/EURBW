@@ -32,6 +32,7 @@ import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.commands.shout.ShoutCommand;
 import com.andrei1058.bedwars.configuration.Permissions;
 import com.andrei1058.bedwars.support.papi.SupportPAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -66,8 +67,15 @@ public class ChatFormatting implements Listener {
         Language language = getPlayerLanguage(p);
 
         // handle lobby world for multi arena
-        if (getServerType() == ServerType.MULTIARENA && p.getWorld().getName().equalsIgnoreCase(BedWars.getLobbyWorld())) {
-            setRecipients(e, p.getWorld().getPlayers());
+        if (getServerType() == ServerType.MULTIARENA && Arena.getArenaByPlayer(p) == null) {
+            List<Player> recipients = p.getWorld().getPlayers();
+
+            for (Player plr : Bukkit.getOnlinePlayers()) {
+                if (Arena.getArenaByPlayer(plr) == null) {
+                    recipients.add(plr);
+                }
+            }
+            setRecipients(e, recipients);
         }
 
         // handle arena chat

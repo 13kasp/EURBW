@@ -171,11 +171,11 @@ public class DamageDeathMove implements Listener {
                 if (e.getDamager() instanceof Player) {
                     damager = (Player) e.getDamager();
                 } else if (e.getDamager() instanceof Projectile) {
+                    projectile = true;
                     ProjectileSource shooter = ((Projectile) e.getDamager()).getShooter();
                     if (shooter instanceof Player) {
                         damager = (Player) shooter;
                     } else return;
-                    projectile = true;
                 } else if (e.getDamager() instanceof Player) {
                     damager = (Player) e.getDamager();
                     if (a.isReSpawning(damager)) {
@@ -256,18 +256,20 @@ public class DamageDeathMove implements Listener {
 
                     // #274
                     // if player gets hit show him
-                    if (a.getShowTime().containsKey(p)) {
-                        Bukkit.getScheduler().runTask(plugin, () -> {
-                            for (Player on : a.getWorld().getPlayers()) {
-                                BedWars.nms.showArmor(p, on);
-                                //BedWars.nms.showPlayer(p, on);
-                            }
-                            a.getShowTime().remove(p);
-                            p.removePotionEffect(PotionEffectType.INVISIBILITY);
-                            ITeam team = a.getTeam(p);
-                            p.sendMessage(getMsg(p, Messages.INTERACT_INVISIBILITY_REMOVED_DAMGE_TAKEN));
-                            Bukkit.getPluginManager().callEvent(new PlayerInvisibilityPotionEvent(PlayerInvisibilityPotionEvent.Type.REMOVED, team, p, a));
-                        });
+                    if (!(projectile && e.getFinalDamage() < 0.4)) {
+                        if (a.getShowTime().containsKey(p)) {
+                            Bukkit.getScheduler().runTask(plugin, () -> {
+                                for (Player on : a.getWorld().getPlayers()) {
+                                    BedWars.nms.showArmor(p, on);
+                                    //BedWars.nms.showPlayer(p, on);
+                                }
+                                a.getShowTime().remove(p);
+                                p.removePotionEffect(PotionEffectType.INVISIBILITY);
+                                ITeam team = a.getTeam(p);
+                                p.sendMessage(getMsg(p, Messages.INTERACT_INVISIBILITY_REMOVED_DAMGE_TAKEN));
+                                Bukkit.getPluginManager().callEvent(new PlayerInvisibilityPotionEvent(PlayerInvisibilityPotionEvent.Type.REMOVED, team, p, a));
+                            });
+                        }
                     }
                     //
                 }
@@ -555,8 +557,9 @@ public class DamageDeathMove implements Listener {
                 //respawn session
                 int respawnTime = config.getInt(ConfigPath.GENERAL_CONFIGURATION_RE_SPAWN_COUNTDOWN);
                 if (respawnTime > 1) {
+                    if (!e.getPlayer().getWorld().equals(a.getWorld())) return;
                     e.setRespawnLocation(a.getReSpawnLocation());
-                    a.startReSpawnSession(e.getPlayer(), respawnTime);
+                    a.startReSpawnSession(e.getPlayer(), respawnTime, false);
                 } else {
                     // instant respawn configuration
                     e.setRespawnLocation(t.getSpawn());

@@ -29,6 +29,8 @@ import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.Misc;
 import com.andrei1058.bedwars.arena.SetupSession;
 import com.andrei1058.bedwars.commands.bedwars.MainCommand;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -52,7 +54,19 @@ public class CmdStats extends SubCommand {
     @Override
     public boolean execute(String[] args, CommandSender s) {
         if (s instanceof ConsoleCommandSender) return false;
-        Player p = (Player) s;
+
+        Player p = (Player) s;;
+        Player target = p;
+
+        if (args.length > 0) {
+            target = Bukkit.getPlayer(args[0]);
+        }
+
+        if (target == null) {
+            s.sendMessage(ChatColor.RED + "Player not found / not online");
+            return true;
+        }
+
         IArena a = Arena.getArenaByPlayer(p);
         if (a != null){
             if (!(a.getStatus() == GameState.starting || a.getStatus() == GameState.waiting)){
@@ -62,16 +76,16 @@ public class CmdStats extends SubCommand {
             }
         }
         if (statsCoolDown.containsKey(p.getUniqueId())){
-            if (System.currentTimeMillis() - 3000 >= statsCoolDown.get(p.getUniqueId())) {
+            if (System.currentTimeMillis() - 1500 >= statsCoolDown.get(p.getUniqueId())) {
                 statsCoolDown.replace(p.getUniqueId(), System.currentTimeMillis());
             } else {
-                //wait 3 seconds
+                //wait 1.5 seconds
                 return true;
             }
         } else {
             statsCoolDown.put(p.getUniqueId(), System.currentTimeMillis());
         }
-        Misc.openStatsGUI(p);
+        Misc.openStatsGUI(p, target);
         return true;
     }
 

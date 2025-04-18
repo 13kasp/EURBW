@@ -456,10 +456,11 @@ public interface IArena {
      *
      * @param player  target player.
      * @param seconds countdown in seconds. 0 for instant re-spawn.
+     * @param isRejoin is the respawn bc of a player rejoining
      * @return false if the player is not actually in game or if is in another re-spawn session.
      */
     @SuppressWarnings("UnusedReturnValue")
-    boolean startReSpawnSession(Player player, int seconds);
+    boolean startReSpawnSession(Player player, int seconds, boolean isRejoin);
 
     /**
      * Check if a player is in re-spawning screen/ countdown.

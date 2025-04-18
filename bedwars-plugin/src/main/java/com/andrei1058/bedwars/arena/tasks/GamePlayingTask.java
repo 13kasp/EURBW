@@ -168,25 +168,26 @@ public class GamePlayingTask implements Runnable, PlayingTask {
         }
         int distance = 0;
         for (ITeam t : getArena().getTeams()) {
-            if (t.getSize() > 1) {
-                for (Player p : t.getMembers()) {
-                    for (Player p2 : t.getMembers()) {
-                        if (p2 == p) continue;
-                        if (distance == 0) {
-                            distance = (int) p.getLocation().distance(p2.getLocation());
-                        } else if ((int) p.getLocation().distance(p2.getLocation()) < distance) {
-                            distance = (int) p.getLocation().distance(p2.getLocation());
-                        }
-                    }
-                    nms.playAction(p, getMsg(p, Messages.FORMATTING_ACTION_BAR_TRACKING).replace("{team}", t.getColor().chat() + t.getDisplayName(Language.getPlayerLanguage(p)))
-                            .replace("{distance}", t.getColor().chat().toString() + distance).replace("&", "§"));
-                }
-            }
-
             // spawn items
             for (IGenerator o : t.getGenerators()) {
                 o.spawn();
             }
+//
+//            if (t.getSize() > 1) {
+//                for (Player p : t.getMembers()) {
+//                    for (Player p2 : t.getMembers()) {
+//                        if (p2 == p) continue;
+//                        if (!p.getWorld().getName().equals(p2.getWorld().getName())) continue;
+//                        if (distance == 0) {
+//                            distance = (int) p.getLocation().distance(p2.getLocation());
+//                        } else if ((int) p.getLocation().distance(p2.getLocation()) < distance) {
+//                            distance = (int) p.getLocation().distance(p2.getLocation());
+//                        }
+//                    }
+//                    nms.playAction(p, getMsg(p, Messages.FORMATTING_ACTION_BAR_TRACKING).replace("{team}", t.getColor().chat() + t.getDisplayName(Language.getPlayerLanguage(p)))
+//                            .replace("{distance}", t.getColor().chat().toString() + distance).replace("&", "§"));
+//                }
+//            }
         }
 
         /* AFK SYSTEM FOR PLAYERS */

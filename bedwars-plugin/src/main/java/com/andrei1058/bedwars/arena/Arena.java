@@ -1132,10 +1132,6 @@ public class Arena implements IArena {
             reJoin.getTask().destroy();
         }
 
-        PlayerReJoinEvent ev = new PlayerReJoinEvent(p, this, BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_RE_SPAWN_COUNTDOWN));
-        Bukkit.getPluginManager().callEvent(ev);
-        if (ev.isCancelled()) return false;
-
         for (Player on : Bukkit.getOnlinePlayers()) {
             if (on.equals(p)) continue;
             if (!isInArena(on)) {
@@ -1170,8 +1166,11 @@ public class Arena implements IArena {
             sc.getCachedItems().add(ci);
         }
 
-        reJoin.getBwt().reJoin(p, ev.getRespawnTime());
+        reJoin.getBwt().reJoin(p, BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_RE_SPAWN_COUNTDOWN));
         reJoin.destroy(false);
+
+        PlayerReJoinEvent ev = new PlayerReJoinEvent(p, this, BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_RE_SPAWN_COUNTDOWN));
+        Bukkit.getPluginManager().callEvent(ev);
 
         SidebarService.getInstance().giveSidebar(p, this, true);
         return true;
@@ -2491,7 +2490,7 @@ public class Arena implements IArena {
     }
 
     @Override
-    public boolean startReSpawnSession(Player player, int seconds) {
+    public boolean startReSpawnSession(Player player, int seconds, boolean isRejoin) {
         if (respawnSessions.get(player) == null) {
             IArena arena = Arena.getArenaByPlayer(player);
             if (arena == null) {
@@ -2513,6 +2512,11 @@ public class Arena implements IArena {
 
                 respawnSessions.put(player, seconds);
                 Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> {
+                    if (!isRejoin && !player.getWorld().equals(world)) {
+                        player.sendMessage(ChatColor.RED + "Don't");
+                        return;
+                    }
+
                     player.setAllowFlight(true);
                     player.setFlying(true);
 

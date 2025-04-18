@@ -173,10 +173,7 @@ public class CmdList extends SubCommand {
 
             p.spigot().sendMessage(Misc.msgHoverClick(ss.dot() + "save", ChatColor.WHITE + "Save arena and go back to lobby", "/" + getParent().getName() + " save", ClickEvent.Action.SUGGEST_COMMAND));
         } else {
-            TextComponent credits = new TextComponent(ChatColor.BLUE + "" + ChatColor.BOLD + com.andrei1058.bedwars.commands.bedwars.MainCommand.getDot() + " " + ChatColor.GOLD + plugin.getName() + " " + ChatColor.GRAY + "v" + plugin.getDescription().getVersion() + " by andrei1058");
-            credits.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, link));
-            credits.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Arenas: " + (Arena.getArenas().size() == 0 ? ChatColor.RED + "0" : ChatColor.GREEN + "" + Arena.getArenas().size())).create()));
-            ((Player) s).spigot().sendMessage(credits);
+            p.sendMessage(ChatColor.BLUE + "RBW Commands");
             for (String string : getList((Player) s, Messages.COMMAND_MAIN)) {
                 s.sendMessage(string);
             }

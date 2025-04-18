@@ -45,10 +45,14 @@ import com.andrei1058.bedwars.commands.leave.LeaveCommand;
 import com.andrei1058.bedwars.commands.party.PartyCommand;
 import com.andrei1058.bedwars.commands.rejoin.RejoinCommand;
 import com.andrei1058.bedwars.commands.shout.ShoutCommand;
+import com.andrei1058.bedwars.commands.spectate.SpectateCommand;
+import com.andrei1058.bedwars.commands.stats.StatsCommand;
 import com.andrei1058.bedwars.configuration.*;
 import com.andrei1058.bedwars.database.Database;
 import com.andrei1058.bedwars.database.SQLite;
 import com.andrei1058.bedwars.halloween.HalloweenSpecial;
+import com.andrei1058.bedwars.hotbarmanager.HotbarInventoryEventsListener;
+import com.andrei1058.bedwars.hotbarmanager.HotbarPlayerJoinEvent;
 import com.andrei1058.bedwars.language.*;
 import com.andrei1058.bedwars.levels.internal.InternalLevel;
 import com.andrei1058.bedwars.levels.internal.LevelListeners;
@@ -75,7 +79,6 @@ import com.andrei1058.bedwars.support.party.NoParty;
 import com.andrei1058.bedwars.support.party.PAF;
 import com.andrei1058.bedwars.support.party.PAFBungeecordRedisApi;
 import com.andrei1058.bedwars.support.party.PartiesAdapter;
-import com.andrei1058.bedwars.support.preloadedparty.PrePartyListener;
 import com.andrei1058.bedwars.support.vault.*;
 import com.andrei1058.bedwars.support.vipfeatures.VipFeatures;
 import com.andrei1058.bedwars.support.vipfeatures.VipListeners;
@@ -277,7 +280,7 @@ public class BedWars extends JavaPlugin {
                 new Inventory(), new Interact(), new RefreshGUI(), new HungerWeatherSpawn(), new CmdProcess(),
                 new FireballListener(), new EggBridge(), new SpectatorListeners(), new BaseListener(),
                 new TargetListener(), new LangListener(), new Warnings(this), new ChatAFK(),
-                new GameEndListener(), new DefaultStatsHandler()
+                new GameEndListener(), new DefaultStatsHandler(), new HotbarPlayerJoinEvent(), new HotbarInventoryEventsListener()
         );
 
         if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_HEAL_POOL_ENABLE)) {
@@ -289,7 +292,7 @@ public class BedWars extends JavaPlugin {
                 //registerEvents(new ArenaListeners());
                 ArenaSocket.lobbies.addAll(config.getList(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_LOBBY_SERVERS));
                 new SendTask();
-                registerEvents(new AutoscaleListener(), new PrePartyListener(), new JoinListenerBungee());
+                registerEvents(new AutoscaleListener(), new JoinListenerBungee());
                 Bukkit.getScheduler().runTaskTimerAsynchronously(this, new LoadedUsersCleaner(), 60L, 60L);
             } else {
                 registerEvents(new ServerPingListener(), new JoinListenerBungeeLegacy());
@@ -504,7 +507,7 @@ public class BedWars extends JavaPlugin {
 
         // Initialize sidebar manager
         if (SidebarService.init(this)) {
-            out.info("Initializing SidebarLib by andrei1058");
+            out.info("Initializing SidebarLib 1058");
         } else {
             this.getLogger().severe("SidebarLib by andrei1058 does not support your server version");
             Bukkit.getPluginManager().disablePlugin(this);
@@ -574,14 +577,20 @@ public class BedWars extends JavaPlugin {
         if (!nms.isBukkitCommandRegistered("shout")) {
             nms.registerCommand("shout", new ShoutCommand("shout"));
         }
+        if (!nms.isBukkitCommandRegistered("spectate")) {
+            nms.registerCommand("spectate", new SpectateCommand("spectate"));
+        }
+        if (!nms.isBukkitCommandRegistered("stats")) {
+            nms.registerCommand("stats", new StatsCommand("stats"));
+        }
         nms.registerCommand("rejoin", new RejoinCommand("rejoin"));
         if (!(nms.isBukkitCommandRegistered("leave") && getServerType() == ServerType.BUNGEE)) {
             nms.registerCommand("leave", new LeaveCommand("leave"));
         }
-        if (getServerType() != ServerType.BUNGEE && config.getBoolean(ConfigPath.GENERAL_ENABLE_PARTY_CMD)) {
-            Bukkit.getLogger().info("Registering /party command..");
-            nms.registerCommand("party", new PartyCommand("party"));
-        }
+//        if (getServerType() != ServerType.BUNGEE && config.getBoolean(ConfigPath.GENERAL_ENABLE_PARTY_CMD)) {
+//            Bukkit.getLogger().info("Registering /party command..");
+//            nms.registerCommand("party", new PartyCommand("party"));
+//        }
     }
 
     public void onDisable() {

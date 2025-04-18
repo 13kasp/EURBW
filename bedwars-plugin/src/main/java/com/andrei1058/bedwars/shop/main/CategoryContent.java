@@ -187,7 +187,6 @@ public class CategoryContent implements ICategoryContent {
         //upgrade if possible
         shopCache.upgradeCachedItem(this, slot);
 
-
         //give items
         giveItems(player, shopCache, Arena.getArenaByPlayer(player));
 

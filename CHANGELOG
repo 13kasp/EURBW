@@ -176,7 +176,7 @@ for devs:
 - added 1.14 support
 - changed a task from async to sync
 - people with bw.* permission can see now all the commands list
-- added new papi placeholder ![group_count_name](https://gitlab.com/andrei1058/BedWars1058/wikis/papi-hook#arena-group-count) and fixed arena_count_name
+- added new papi placeholder ![group_count_name](https://gitlab.com/1058/BedWars1058/wikis/papi-hook#arena-group-count) and fixed arena_count_name
 
 # 0.9.13beta (API 13)
 - fixed issue where the plugin was creating world files directly in the server container

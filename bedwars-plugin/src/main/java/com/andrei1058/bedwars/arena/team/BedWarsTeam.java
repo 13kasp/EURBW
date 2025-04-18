@@ -185,7 +185,7 @@ public class BedWarsTeam implements ITeam {
 
     public void reJoin(@NotNull Player p, int respawnTime) {
         addPlayers(p);
-        arena.startReSpawnSession(p, respawnTime);
+        arena.startReSpawnSession(p, respawnTime, true);
     }
 
     /**

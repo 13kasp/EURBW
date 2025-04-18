@@ -52,32 +52,35 @@ public class JoinListenerMultiArena implements Listener {
             }
         }
 
-        ReJoin reJoin = ReJoin.getPlayer(p);
+        //just use /rejoin
 
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            // Hide new player to players and spectators, and vice versa
-            // Players from lobby will remain visible
-            for (Player online : Bukkit.getOnlinePlayers()){
-                if (Arena.isInArena(online)) {
-                    BedWars.nms.spigotHidePlayer(online, p);
-                    BedWars.nms.spigotHidePlayer(p, online);
-                } else {
-                    BedWars.nms.spigotShowPlayer(online, p);
-                    BedWars.nms.spigotShowPlayer(p, online);
-                }
-            }
-
-            // To prevent invisibility issues handle ReJoin after sending invisibility packets
-            if (reJoin != null) {
-                if (reJoin.canReJoin()) {
-                    reJoin.reJoin(p);
-                    return;
-                }
-                reJoin.destroy(false);
-            }
-        }, 14L);
-
-        if (reJoin != null && reJoin.canReJoin()) return;
+//       ReJoin reJoin = ReJoin.getPlayer(p);
+//
+//        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+//            // Hide new player to players and spectators, and vice versa
+//            // Players from lobby will remain visible
+//            for (Player online : Bukkit.getOnlinePlayers()){
+//                if (Arena.isInArena(online)) {
+//                    BedWars.nms.spigotHidePlayer(online, p);
+//                    BedWars.nms.spigotHidePlayer(p, online);
+//                } else {
+//                    BedWars.nms.spigotShowPlayer(online, p);
+//                    BedWars.nms.spigotShowPlayer(p, online);
+//                }
+//            }
+//
+//
+//            // To prevent invisibility issues handle ReJoin after sending invisibility packets
+//            if (reJoin != null) {
+//                if (reJoin.canReJoin()) {
+//                    reJoin.reJoin(p);
+//                    return;
+//                }
+                //reJoin.destroy(false);
+//            }
+//        }, 14L);
+//
+//        if (reJoin != null && reJoin.canReJoin()) return;
 
         // Teleport to lobby location
         Location lobbyLocation = config.getConfigLoc("lobbyLoc");

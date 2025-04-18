@@ -1,5 +1,6 @@
 package com.andrei1058.bedwars.listeners;
 
+import com.andrei1058.bedwars.BedWars;
 import com.andrei1058.bedwars.api.arena.IArena;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
 import com.andrei1058.bedwars.arena.Arena;
@@ -15,6 +16,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.*;
@@ -47,7 +49,7 @@ public class FireballListener implements Listener {
     @EventHandler
     public void fireballHit(ProjectileHitEvent e) {
         if(!(e.getEntity() instanceof Fireball)) return;
-        Location location = e.getEntity().getLocation();
+        Location hitLocation = e.getEntity().getLocation();
 
         ProjectileSource projectileSource = e.getEntity().getShooter();
         if(!(projectileSource instanceof Player)) return;
@@ -55,30 +57,47 @@ public class FireballListener implements Listener {
 
         IArena arena = Arena.getArenaByPlayer(source);
 
-        Vector vector = location.toVector();
-
-        World world = location.getWorld();
+        World world = hitLocation.getWorld();
 
         assert world != null;
         Collection<Entity> nearbyEntities = world
-                .getNearbyEntities(location, fireballExplosionSize, fireballExplosionSize, fireballExplosionSize);
+                .getNearbyEntities(hitLocation, fireballExplosionSize, fireballExplosionSize, fireballExplosionSize);
         for(Entity entity : nearbyEntities) {
             if(!(entity instanceof Player)) continue;
             Player player = (Player) entity;
             if(!getAPI().getArenaUtil().isPlaying(player)) continue;
 
+            //            eurbw v2
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    Location playerLocation = player.getLocation();
+                    Vector rawDirection = playerLocation.toVector().subtract(hitLocation.toVector());
+                    Vector direction = rawDirection.clone().normalize();
+                    direction.setX(direction.getX() * -fireballHorizontal);
+                    direction.setZ(direction.getZ() * -fireballHorizontal);
+                    direction.setY(fireballVertical);
 
-            Vector playerVector = player.getLocation().toVector();
-            Vector normalizedVector = vector.subtract(playerVector).normalize();
-            Vector horizontalVector = normalizedVector.multiply(fireballHorizontal);
-            double y = normalizedVector.getY();
-            if(y < 0 ) y += 1.5;
-            if(y <= 0.5) {
-                y = fireballVertical*1.5; // kb for not jumping
-            } else {
-                y = y*fireballVertical*1.5; // kb for jumping
-            }
-            player.setVelocity(horizontalVector.setY(y));
+                    player.setVelocity(direction);
+                }
+            }.runTaskLater(BedWars.plugin, 2L);
+
+//            eurbw v1
+//            Vector launchDir = player.getLocation().toVector().subtract(hitLocation.toVector()).normalize();
+//            Vector knockback = launchDir.clone().multiply(fireballHorizontal);
+//            knockback.setY(fireballVertical);
+//            knockback.setX(knockback.getX()*-1);
+//            knockback.setZ(knockback.getZ()*-1);
+
+//            bw1058 implementation
+//            Vector playerVector = player.getLocation().toVector();
+//            Vector normalizedVector = vector.subtract(playerVector).normalize();
+//            Vector horizontalVector = normalizedVector.multiply(fireballHorizontal);
+//            double y = normalizedVector.getY();
+//            if(y < 0 ) y += 1.5;
+//            y = y*fireballVertical*1.5;
+//            horizontalVector.setY(y);
+//            player.setVelocity(knockback);
 
             LastHit lh = LastHit.getLastHit(player);
             if (lh != null) {
@@ -103,7 +122,6 @@ public class FireballListener implements Listener {
             }
         }
     }
-
 
     @EventHandler
     public void fireballDirectHit(EntityDamageByEntityEvent e) {

@@ -290,12 +290,12 @@ public class Misc {
     /**
      * open stats GUI to player
      */
-    public static void openStatsGUI(Player p) {
+    public static void openStatsGUI(Player p, Player target) {
 
         Bukkit.getScheduler().runTask(plugin, () -> {
 
             /* create inventory */
-            Inventory inv = Bukkit.createInventory(null, config.getInt(ConfigPath.GENERAL_CONFIGURATION_STATS_GUI_SIZE), replaceStatsPlaceholders(p, getMsg(p, Messages.PLAYER_STATS_GUI_INV_NAME), true));
+            Inventory inv = Bukkit.createInventory(null, 27, replaceStatsPlaceholders(target, getMsg(target, Messages.PLAYER_STATS_GUI_INV_NAME), true));
 
             /* add custom items to gui */
             for (String s : config.getYml().getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_STATS_PATH).getKeys(false)) {
@@ -305,10 +305,10 @@ public class Misc {
                 ItemStack i = nms.createItemStack(config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_STATS_ITEMS_MATERIAL.replace("%path%", s)).toUpperCase(), 1, (short) config.getInt(ConfigPath.GENERAL_CONFIGURATION_STATS_ITEMS_DATA.replace("%path%", s)));
                 ItemMeta im = i.getItemMeta();
                 im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-                im.setDisplayName(replaceStatsPlaceholders(p, getMsg(p, Messages.PLAYER_STATS_GUI_PATH + "-" + s + "-name"), true));
+                im.setDisplayName(replaceStatsPlaceholders(target, getMsg(target, Messages.PLAYER_STATS_GUI_PATH + "-" + s + "-name"), true));
                 List<String> lore = new ArrayList<>();
-                for (String string : getList(p, Messages.PLAYER_STATS_GUI_PATH + "-" + s + "-lore")) {
-                    lore.add(replaceStatsPlaceholders(p, string, true));
+                for (String string : getList(target, Messages.PLAYER_STATS_GUI_PATH + "-" + s + "-lore")) {
+                    lore.add(replaceStatsPlaceholders(target, string, true));
                 }
                 im.setLore(lore);
                 i.setItemMeta(im);
